@@ -36,11 +36,8 @@ public class UserController {
         try {
             String email = credentials.getEmail();
             String password = credentials.getPassword();
-            String role = credentials.getRole();
-            System.out.println(role);
 
             User authenticatedParent = parentServices.findByEmail(email);
-
 
             System.out.println(authenticatedParent);
             if (authenticatedParent != null && authenticatedParent.getPassword().equals(password) && authenticatedParent.getRole() != null && authenticatedParent.getRole().equals("parent")) {
