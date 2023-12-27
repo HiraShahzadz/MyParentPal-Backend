@@ -8,6 +8,8 @@ public class MyParentPalApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MyParentPalApplication.class, args);
+	System.out.println("my parent palmm");
+	
 	}
 
 }
