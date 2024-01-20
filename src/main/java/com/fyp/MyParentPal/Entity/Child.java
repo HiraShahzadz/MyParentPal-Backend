@@ -5,10 +5,6 @@ import java.util.List;
 
 public class Child extends User {
 
-
-
-
-
     private String dob;
     private String gender;
     private List<String> tags;

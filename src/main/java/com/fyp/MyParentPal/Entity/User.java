@@ -4,7 +4,8 @@ public class User {
 	private String id;
 	private String email;
 	private String password;
-
+	private String role;
+	private String name;
 	public String getId() {
 		return id;
 	}
@@ -13,8 +14,7 @@ public class User {
 		this.id = id;
 	}
 
-	private String role;
-	private String name;
+
 
 	public String getName() {
 		return name;

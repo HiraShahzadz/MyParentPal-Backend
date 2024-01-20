@@ -1,9 +1,9 @@
 package com.fyp.MyParentPal.Controller;
 
-import com.fyp.MyParentPal.Entity.Admin;
 import com.fyp.MyParentPal.Entity.Child;
 import com.fyp.MyParentPal.Entity.Parent;
 import com.fyp.MyParentPal.Entity.User;
+import com.fyp.MyParentPal.Service.AdminServices;
 import com.fyp.MyParentPal.Service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +16,7 @@ public class UserController {
 
     @Autowired
     private UserServices userServices;
-
-    @PostMapping(value = "/save-parent")
-    public ResponseEntity<String> saveParent(@RequestBody Parent parent) {
-        // Check if the email already exists in the database
-        if (userServices.existsByEmail(parent.getEmail())) {
-            return ResponseEntity.status(401).body("Email already exists");
-        }
-
-        // Save or update the parent
-        userServices.saveorUpdate(parent);
-        return ResponseEntity.ok().body(parent.getId());
-    }
-
+    private AdminServices adminServices;
     @PostMapping(value = "/save-child")
     public ResponseEntity<String> saveChild(@RequestBody Child child) {
         // Check if the email already exists in the database
@@ -40,17 +28,18 @@ public class UserController {
         userServices.saveorUpdate(child);
         return ResponseEntity.ok().body(child.getId());
     }
-    @PostMapping(value = "/save-admin")
-    public ResponseEntity<String> saveAdmin(@RequestBody Admin admin) {
+    @PostMapping(value = "/save-parent")
+    public ResponseEntity<String> saveParent(@RequestBody Parent parent) {
         // Check if the email already exists in the database
-        if (userServices.existsByEmail(admin.getEmail())) {
+        if (userServices.existsByEmail(parent.getEmail())) {
             return ResponseEntity.status(401).body("Email already exists");
         }
 
         // Save or update the child
-        userServices.saveorUpdate(admin);
-        return ResponseEntity.ok().body(admin.getId());
+        userServices.saveorUpdate(parent);
+        return ResponseEntity.ok().body(parent.getId());
     }
+
 
     @GetMapping(value = "/get-all")
     public Iterable<User> getUsers() {
@@ -74,7 +63,7 @@ public class UserController {
                 } else if (authenticatedUser instanceof Child) {
                     return ResponseEntity.ok().body("{\"message\":\"Child Login successful\"}");
                 }
-                else if (authenticatedUser instanceof Admin) {
+                else if (authenticatedUser.getEmail().equals("admin")&& authenticatedUser.getPassword().equals("Admin@123")) {
                     return ResponseEntity.ok().body("{\"message\":\"Admin Login successful\"}");
                 }
 
