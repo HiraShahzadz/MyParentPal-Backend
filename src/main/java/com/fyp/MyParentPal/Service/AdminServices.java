@@ -1,32 +1,30 @@
 package com.fyp.MyParentPal.Service;
 
-import com.fyp.MyParentPal.Entity.User;
-import com.fyp.MyParentPal.Repo.UserRepo;
+import com.fyp.MyParentPal.Entity.Admin;
+import com.fyp.MyParentPal.Repo.AdminRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServices {
-
+public class AdminServices {
     @Autowired
-    private UserRepo repo;
+    private AdminRepo repo;
 
-    public void saveorUpdate(User users) {
+    public void saveorUpdate(Admin admin) {
 
-        repo.save(users);
+        repo.save(admin);
     }
 
-    public Iterable<User> listAll() {
+    public Iterable<Admin> listAll() {
 
         return this.repo.findAll();
     }
-    public User findByEmail(String email) {
+    public Admin findByEmail(String email) {
         return repo.findByEmail(email);
     }
-    
+
 
     public boolean existsByEmail(String email) {
         return repo.existsByEmail(email);
     }
-
 }
