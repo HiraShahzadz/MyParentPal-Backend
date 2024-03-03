@@ -43,7 +43,7 @@ public class UserController {
 
     @GetMapping(value = "/get-all")
     public Iterable<User> getUsers() {
-
+System.out.println("Report is "+userServices.listChildAndParentUsers());
         return userServices.listChildAndParentUsers();
     }
 
@@ -78,30 +78,32 @@ public class UserController {
     @GetMapping(value = "/count-users")
     public ResponseEntity<?> countParentChildUsers() {
         try {
-            // Fetch parent and child user counts
             long parentUsers = userServices.getParentUsersCount();
             long childUsers = userServices.getChildUsersCount();
-
-            // Create a response object with user counts
-            UserCountsResponse countsResponse = new UserCountsResponse(parentUsers, childUsers);
-            System.out.println("Parent Users: " + parentUsers);
-            System.out.println("Child Users: " + childUsers);
-            return ResponseEntity.ok(countsResponse);
+            long totalUsers=parentUsers+childUsers;
+            System.out.println("Parent Users "+parentUsers);
+            System.out.println("Child Users "+childUsers);
+            System.out.println("Total Users "+totalUsers);
+            return ResponseEntity.ok(new UserCountsResponse(parentUsers, childUsers,totalUsers));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
     }
+
     static class UserCountsResponse {
         private long parentUsers;
         private long childUsers;
+        private long totalUsers;
 
-        public UserCountsResponse(long parentUsers, long childUsers) {
-            this.parentUsers = parentUsers;
-            this.childUsers = childUsers;
+        public long getTotalUsers() {
+            return totalUsers;
         }
 
-        // Getters and setters for parentUsers and childUsers
+        public void setTotalUsers(long totalUsers) {
+            this.totalUsers = totalUsers;
+        }
+
         public long getParentUsers() {
             return parentUsers;
         }
@@ -116,6 +118,12 @@ public class UserController {
 
         public void setChildUsers(long childUsers) {
             this.childUsers = childUsers;
+        }
+
+        public UserCountsResponse(long parentUsers, long childUsers, long totalUsers) {
+            this.parentUsers = parentUsers;
+            this.childUsers = childUsers;
+            this.totalUsers = totalUsers;
         }
     }
 

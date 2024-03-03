@@ -44,10 +44,11 @@ public class UserServices {
     }
 
     public long getParentUsersCount() {
-        return repo.countByRole(Role.PARENT);
+        return repo.countByRole("parent");
     }
 
     public long getChildUsersCount() {
-        return repo.countByRole(Role.CHILD);
+        return repo.countByRole("child");
     }
+
 }
