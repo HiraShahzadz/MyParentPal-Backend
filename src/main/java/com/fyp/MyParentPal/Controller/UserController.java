@@ -43,7 +43,8 @@ public class UserController {
 
     @GetMapping(value = "/get-all")
     public Iterable<User> getUsers() {
-        return userServices.listAll();
+
+        return userServices.listChildAndParentUsers();
     }
 
     @PostMapping("/signin")
@@ -74,5 +75,49 @@ public class UserController {
             return ResponseEntity.status(500).body("An error occurred during login: " + e.getMessage());
         }
     }
+    @GetMapping(value = "/count-users")
+    public ResponseEntity<?> countParentChildUsers() {
+        try {
+            // Fetch parent and child user counts
+            long parentUsers = userServices.getParentUsersCount();
+            long childUsers = userServices.getChildUsersCount();
+
+            // Create a response object with user counts
+            UserCountsResponse countsResponse = new UserCountsResponse(parentUsers, childUsers);
+            System.out.println("Parent Users: " + parentUsers);
+            System.out.println("Child Users: " + childUsers);
+            return ResponseEntity.ok(countsResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+        }
+    }
+    static class UserCountsResponse {
+        private long parentUsers;
+        private long childUsers;
+
+        public UserCountsResponse(long parentUsers, long childUsers) {
+            this.parentUsers = parentUsers;
+            this.childUsers = childUsers;
+        }
+
+        // Getters and setters for parentUsers and childUsers
+        public long getParentUsers() {
+            return parentUsers;
+        }
+
+        public void setParentUsers(long parentUsers) {
+            this.parentUsers = parentUsers;
+        }
+
+        public long getChildUsers() {
+            return childUsers;
+        }
+
+        public void setChildUsers(long childUsers) {
+            this.childUsers = childUsers;
+        }
+    }
 
 }
+
