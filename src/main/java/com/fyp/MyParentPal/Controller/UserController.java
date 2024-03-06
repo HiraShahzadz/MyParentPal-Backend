@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
+
 @RestController
 @CrossOrigin(origins = "*") // Add your frontend origin here
 @RequestMapping("api/v1/user")
@@ -19,6 +21,9 @@ public class UserController {
     private AdminServices adminServices;
     @PostMapping(value = "/save-child")
     public ResponseEntity<String> saveChild(@RequestBody Child child) {
+        // Convert Base64 string to byte array
+        byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
+        child.setImage(decodedImage);
         // Check if the email already exists in the database
         if (userServices.existsByEmail(child.getEmail())) {
             return ResponseEntity.status(401).body("Email already exists");

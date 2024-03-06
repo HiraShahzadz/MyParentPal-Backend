@@ -8,19 +8,16 @@ public class Child extends User {
     private String dob;
     private String gender;
     private List<String> tags;
-    private String parentId;
+    private byte[] image;
+    private String img; // Base64 encoded image string
 
-    public String getParentId() {
-        return parentId;
-    }
 
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
 // constructors, getters, setters, and other methods
 
 
+    public Child() {
 
+    }
 
     public String getDob() {
         return dob;
@@ -45,4 +42,21 @@ public class Child extends User {
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
 }
+
