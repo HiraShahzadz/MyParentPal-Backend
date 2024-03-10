@@ -1,5 +1,6 @@
 package com.fyp.MyParentPal.Controller;
 
+
 import com.fyp.MyParentPal.Entity.Child;
 import com.fyp.MyParentPal.Entity.Parent;
 import com.fyp.MyParentPal.Entity.User;
@@ -9,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*") // Add your frontend origin here
@@ -19,18 +22,23 @@ public class UserController {
     @Autowired
     private UserServices userServices;
     private AdminServices adminServices;
+    @Autowired
+    private Child mychild;
+
     @PostMapping(value = "/save-child")
     public ResponseEntity<String> saveChild(@RequestBody Child child) {
         // Convert Base64 string to byte array
+        System.out.println("Parent id at child saving time:" + child.getParentId());
         byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
         child.setImage(decodedImage);
+        child.setParentId(mychild.getParentId());
         // Check if the email already exists in the database
         if (userServices.existsByEmail(child.getEmail())) {
             return ResponseEntity.status(401).body("Email already exists");
         }
-
         // Save or update the child
         userServices.saveorUpdate(child);
+
         return ResponseEntity.ok().body(child.getId());
     }
     @PostMapping(value = "/save-parent")
@@ -51,6 +59,34 @@ public class UserController {
         return userServices.listAll();
     }
 
+    @GetMapping(value = "/get-child")
+    public ResponseEntity<List<Child>> getChildData() {
+        try {
+            // Get the parent ID from mychild
+            String parentId = mychild.getParentId();
+
+            // Fetch All User Data
+            Iterable<User> childData = userServices.listAll();
+
+            // Filter out only Child objects with matching parent ID
+            List<Child> children = new ArrayList<>();
+            for (User user : childData) {
+                if (user instanceof Child) {
+                    Child child = (Child) user;
+                    String childParentId = child.getParentId();
+                    if (childParentId != null && childParentId.equals(parentId)) {
+                        children.add(child);
+                    }
+                }
+            }
+
+            return ResponseEntity.ok().body(children);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<String> signIn(@RequestBody User credentials) {
         try {
@@ -63,7 +99,10 @@ public class UserController {
 
             if (authenticatedUser != null && authenticatedUser.getPassword().equals(password)) {
                 if (authenticatedUser instanceof Parent) {
-
+                    String parentId = authenticatedUser.getId();
+                    System.out.println("Parent id:" + parentId);
+                    mychild.setParentId(parentId);
+                    System.out.println("Parent id after setting:" + mychild.getParentId());
                     return ResponseEntity.ok().body("{\"message\":\"Parent Login successful\"}");
                 } else if (authenticatedUser instanceof Child) {
                     return ResponseEntity.ok().body("{\"message\":\"Child Login successful\"}");

@@ -1,17 +1,16 @@
 package com.fyp.MyParentPal.Entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Parent extends User {
 
     private String cnic;
-
-// constructors, getters, setters, and other methods
-
-
-    public String getCnic() {
-        return cnic;
-    }
-
-    public void setCnic(String cnic) {
-        this.cnic = cnic;
-    }
+    private List<String> children;
 }
