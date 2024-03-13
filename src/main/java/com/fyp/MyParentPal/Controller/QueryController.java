@@ -25,6 +25,7 @@ public class QueryController {
         }
         LocalDate localDate = LocalDate.now(ZoneId.of("Asia/Karachi"));
         query.setDate(localDate);
+        System.out.println("Date isss: "+localDate);
         queryServices.saveorUpdate(query);
         return ResponseEntity.ok().body(query.getId());
     }
@@ -54,4 +55,8 @@ public class QueryController {
         System.out.println("Queries are "+queryServices.getAllQueries());
         return queryServices.getAllQueries();
     }
+    public QueryController(QueryServices queryServices) {
+        this.queryServices = queryServices;
+    }
+
 }
