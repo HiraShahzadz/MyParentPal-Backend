@@ -1,8 +1,10 @@
 package com.fyp.MyParentPal.Controller;
 
+import com.fyp.MyParentPal.Entity.EmailDTO;
 import com.fyp.MyParentPal.Entity.Query;
 import com.fyp.MyParentPal.Service.QueryServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +22,7 @@ public class QueryController {
     @PostMapping(value = "/save-query")
     public ResponseEntity<String> saveQuery(@RequestBody Query query) {
         // Check if the email already exists in the database
-        if (queryServices.existsByEmail(query.getEmail())) {
-            return ResponseEntity.status(401).body("Email already exists");
-        }
+
         LocalDate localDate = LocalDate.now(ZoneId.of("Asia/Karachi"));
         query.setDate(localDate);
         System.out.println("Date isss: "+localDate);
@@ -30,25 +30,31 @@ public class QueryController {
         return ResponseEntity.ok().body(query.getId());
     }
 
-    @PutMapping(value = "/update-query-status/{queryId}")
-    public ResponseEntity<String> updateQueryStatus(@PathVariable String queryId) {
+    @PutMapping("/update-query-status/{queryId}")
+    public ResponseEntity<String> updateQueryStatus(
+            @PathVariable String queryId,
+            @RequestBody String responseText) {
+
         Query query = queryServices.getQueryById(queryId);
         if (query == null) {
-            return ResponseEntity.status(404).body("Query not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Query not found");
         }
 
         // Update status to "responded"
         query.setStatus("responded");
+        query.setResponse(responseText); // Set the response text
         queryServices.saveorUpdate(query);
 
-        // Check if the status was updated in the database
+        // Check if the status and response were updated in the database
         Query updatedQuery = queryServices.getQueryById(queryId);
-        if (updatedQuery != null && "responded".equals(updatedQuery.getStatus())) {
-            return ResponseEntity.ok().body("Query status updated to responded");
+        if (updatedQuery != null && "responded".equals(updatedQuery.getStatus()) &&
+                responseText.equals(updatedQuery.getResponse())) {
+            return ResponseEntity.ok("Query status and response updated successfully");
         } else {
-            return ResponseEntity.status(500).body("Failed to update query status");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update query status and response");
         }
     }
+
 
     @GetMapping(value = "/get-all-queries")
     public List<Query> getAllQueries() {
@@ -59,4 +65,19 @@ public class QueryController {
         this.queryServices = queryServices;
     }
 
+    @PostMapping(value = "/send-mail")
+    public ResponseEntity<String> sendTriggerMail(@RequestBody EmailDTO emailDTO) {
+        try {
+            queryServices.sendSimpleEmail(emailDTO.getToEmail(), emailDTO.getSubject(), emailDTO.getBody());
+            return ResponseEntity.ok().body("Mail trigger request accepted");
+        } catch (Exception e) {
+            // Handle exception
+            return ResponseEntity.status(500).body("Failed to trigger mail");
+        }
+    }
+
+
+    // Other methods remain unchanged
 }
+
+
