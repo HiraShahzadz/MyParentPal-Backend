@@ -29,7 +29,9 @@ public class QueryServices {
     public Query getQueryById(String id) {
         return repo.findById(id).orElse(null);
     }
-
+    public List<Query> getQueriesByStatus(String status) {
+        return repo.findByStatus(status);
+    }
 
     public void sendSimpleEmail(String toEmail,
                                 String subject,

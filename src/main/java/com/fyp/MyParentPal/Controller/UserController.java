@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @CrossOrigin(origins = "*") // Add your frontend origin here
 @RequestMapping("api/v1/user")
@@ -38,6 +40,25 @@ public class UserController {
         // Save or update the child
         userServices.saveorUpdate(parent);
         return ResponseEntity.ok().body(parent.getId());
+    }
+    @PostMapping(value = "/save-parent-google")
+    public ResponseEntity<String> saveParentGoogle(@RequestBody Map<String, String> userData) {
+        String email = userData.get("email");
+        String idToken = userData.get("idToken");
+
+        // Validate email and idToken, fetch additional user info from Google if needed
+
+        // Check if the email already exists in the database
+        if (userServices.existsByEmail(email)) {
+            return ResponseEntity.status(401).body("Email already exists");
+        }
+
+        // Save or update the parent user
+        // You may need additional logic here to handle Google sign-in specifics
+        // For example, fetching additional user info from Google and saving it along with the user data
+        // userServices.saveorUpdate(parent);
+System.out.println("sucessssss");
+        return ResponseEntity.ok().body("User signed up successfully");
     }
 
 
