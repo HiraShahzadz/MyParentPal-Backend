@@ -57,14 +57,14 @@ public class UserController {
         // You may need additional logic here to handle Google sign-in specifics
         // For example, fetching additional user info from Google and saving it along with the user data
         // userServices.saveorUpdate(parent);
-System.out.println("sucessssss");
+
         return ResponseEntity.ok().body("User signed up successfully");
     }
 
 
     @GetMapping(value = "/get-all")
     public Iterable<User> getUsers() {
-System.out.println("Report is "+userServices.listChildAndParentUsers());
+
         return userServices.listChildAndParentUsers();
     }
 
@@ -76,7 +76,7 @@ System.out.println("Report is "+userServices.listChildAndParentUsers());
 
             User authenticatedUser = userServices.findByEmail(email);
 
-            System.out.println(authenticatedUser);
+
 
             if (authenticatedUser != null && authenticatedUser.getPassword().equals(password)) {
                 if (authenticatedUser instanceof Parent) {
@@ -102,14 +102,32 @@ System.out.println("Report is "+userServices.listChildAndParentUsers());
             long parentUsers = userServices.getParentUsersCount();
             long childUsers = userServices.getChildUsersCount();
             long totalUsers=parentUsers+childUsers;
-            System.out.println("Parent Users "+parentUsers);
-            System.out.println("Child Users "+childUsers);
-            System.out.println("Total Users "+totalUsers);
+
             return ResponseEntity.ok(new UserCountsResponse(parentUsers, childUsers,totalUsers));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/child-age")
+    public ResponseEntity<?> getChildAge(@RequestBody User credentials) {
+        String email = credentials.getEmail();
+
+        User user = userServices.findByEmail(email);
+
+
+        // Check if the user exists and is a child
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        } else if (!(user instanceof Child)) {
+            return ResponseEntity.status(400).body("User is not a child");
+        }
+
+        // Cast the user to Child and calculate the age
+        Child child = (Child) user;
+        int age = child.calculateAge();
+        return ResponseEntity.ok(age);
     }
 
     static class UserCountsResponse {
