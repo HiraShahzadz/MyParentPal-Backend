@@ -33,15 +33,32 @@ public class TaskController {
     public Iterable<Task> getTasks() {
         return taskServices.listAll();
     }
-    
-   /* @PutMapping(value = "/edit/{id}")
+
+    @PutMapping(value = "/edit_task/{id}")
     private Task update(@RequestBody Task tasks, @PathVariable(name = "id") String _id) {
-    	tasks.set_id(_id);
-    	taskServices.saveorUpdate(tasks);
-    	System.out.println(tasks);
+        // Set the _id received from the path variable
+        tasks.set_id(_id);
+
+        // Retrieve the original task from the database using the _id
+        Task originalTask = taskServices.getTaskByID(_id);
+
+        // Set the id and status values from the original task to prevent updating them
+        tasks.set_id(originalTask.get_id());
+        tasks.setStatus(originalTask.getStatus());
+        tasks.setTaskassignee(originalTask.getTaskassignee());
+        tasks.setTasktype(originalTask.getTasktype());
+        tasks.setChildId(originalTask.getChildId());
+        // Save or update the task
+        taskServices.saveorUpdate(tasks);
+
+        // Print the updated task for debugging
+        System.out.println(tasks);
+
+        // Return the updated task
         return tasks;
     }
-    */
+
+
     @PutMapping(value = "/edit/{id}")
     private Task updateStatus(@RequestBody Task updatedTask, @PathVariable(name = "id") String _id) {
         Task existingTask = taskServices.getTaskByID(_id);

@@ -16,8 +16,6 @@ public class Child extends User {
     private String dob;
     private String gender;
     private List<String> tags;
-    private byte[] image;
-    private String img; // Base64 encoded image string
     private String parentId;
 }
 

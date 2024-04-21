@@ -11,6 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 public class Parent extends User {
 
+    private String firstName;
+    private String lastName;
+    private String phoneNo;
     private String cnic;
-    private List<String> children;
 }

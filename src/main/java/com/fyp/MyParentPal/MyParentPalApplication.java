@@ -10,5 +10,4 @@ public class MyParentPalApplication {
 		SpringApplication.run(MyParentPalApplication.class, args);
 	    System.out.println("MyParentPal");
 	}
-
 }
