@@ -1,6 +1,7 @@
 package com.fyp.MyParentPal.Service;
 
 import com.fyp.MyParentPal.Entity.Child;
+import com.fyp.MyParentPal.Entity.Task;
 import com.fyp.MyParentPal.Entity.User;
 import com.fyp.MyParentPal.Repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,10 @@ public class UserServices {
 
         return this.repo.findAll();
     }
-    public Iterable<User> listChild() {
+    public User getUserByID(String userid) {
 
-        return this.repo.findAll();
+        return repo.findById(userid).get();
     }
-
     public User findByEmail(String email) {
         return repo.findByEmail(email);
     }

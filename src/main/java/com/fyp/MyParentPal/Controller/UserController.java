@@ -1,6 +1,5 @@
 package com.fyp.MyParentPal.Controller;
 
-
 import com.fyp.MyParentPal.Entity.Child;
 import com.fyp.MyParentPal.Entity.Parent;
 import com.fyp.MyParentPal.Entity.User;
@@ -9,7 +8,6 @@ import com.fyp.MyParentPal.Service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -58,6 +56,35 @@ public class UserController {
     public Iterable<User> getUsers() {
         return userServices.listAll();
     }
+
+    @GetMapping(value = "/get-parent")
+    public ResponseEntity<List<Parent>> getParentData() {
+        try {
+            // Get the parent ID from mychild
+            String parentId = mychild.getParentId();
+
+            // Fetch All User Data
+            Iterable<User> userData = userServices.listAll();
+
+            // Filter out only Parent objects with matching parent ID
+            List<Parent> parents = new ArrayList<>();
+            for (User user : userData) {
+                if (user instanceof Parent) {
+                    Parent parent = (Parent) user;
+                    String userId = parent.getId();
+                    if (userId != null && userId.equals(parentId)) {
+                        parents.add(parent);
+                    }
+                }
+            }
+
+            return ResponseEntity.ok().body(parents);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
 
     @GetMapping(value = "/get-child")
     public ResponseEntity<List<Child>> getChildData() {
@@ -118,5 +145,46 @@ public class UserController {
             return ResponseEntity.status(500).body("An error occurred during login: " + e.getMessage());
         }
     }
+    @PutMapping(value = "/editParent/{id}")
+    public ResponseEntity<Parent> updateParentDetails(@RequestBody Parent updatedParent, @PathVariable(name = "id") String parentId) {
+        try {
+            // Fetch the parent from the database based on the provided ID
+            Parent existingParent = (Parent) userServices.getUserByID(parentId);
+
+            // Check if the parent with the provided ID exists
+            if (existingParent == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Update the existing parent's details with the provided data
+            existingParent.setEmail(updatedParent.getEmail());
+            existingParent.setPassword(updatedParent.getPassword());
+            existingParent.setFirstName(updatedParent.getFirstName());
+            existingParent.setLastName(updatedParent.getLastName());
+            existingParent.setPhoneNo(updatedParent.getPhoneNo());
+            existingParent.setCnic(updatedParent.getCnic());
+            // Convert Base64 string to byte array
+
+
+            String imgBase64 = updatedParent.getImg();
+            if (imgBase64 != null) {
+                byte[] decodedImage = Base64.getDecoder().decode(updatedParent.getImg());
+                existingParent.setImage(decodedImage);
+                existingParent.setImg(updatedParent.getImg());
+            }
+
+            // Similarly, update other attributes as needed
+
+            // Save the updated parent back to the database
+            userServices.saveorUpdate(existingParent);
+
+            // Return the updated parent with a success status
+            return ResponseEntity.ok(existingParent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
 
 }
