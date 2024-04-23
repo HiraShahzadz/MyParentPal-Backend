@@ -6,6 +6,16 @@ public class User {
 	private String password;
 	private String role;
 	private String name;
+	private String location;
+
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 	public String getId() {
 		return id;
 	}
