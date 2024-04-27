@@ -2,6 +2,7 @@ package com.fyp.MyParentPal.Controller;
 
 import com.fyp.MyParentPal.Entity.Child;
 import com.fyp.MyParentPal.Entity.Parent;
+import com.fyp.MyParentPal.Entity.Task;
 import com.fyp.MyParentPal.Entity.User;
 import com.fyp.MyParentPal.Service.AdminServices;
 import com.fyp.MyParentPal.Service.UserServices;
@@ -22,7 +23,8 @@ public class UserController {
     private AdminServices adminServices;
     @Autowired
     private Child mychild;
-
+    @Autowired
+    private Task task;
     @PostMapping(value = "/save-child")
     public ResponseEntity<String> saveChild(@RequestBody Child child) {
         // Convert Base64 string to byte array
@@ -65,6 +67,7 @@ public class UserController {
         try {
             // Get the parent ID from mychild
             String parentId = mychild.getParentId();
+
 
             // Fetch All User Data
             Iterable<User> userData = userServices.listAll();
@@ -135,6 +138,10 @@ public class UserController {
                     System.out.println("Parent id after setting:" + mychild.getParentId());
                     return ResponseEntity.ok().body("{\"message\":\"Parent Login successful\"}");
                 } else if (authenticatedUser instanceof Child) {
+                    String childId =  authenticatedUser.getId();
+                    System.out.println("Child id:" + childId);
+                    task.setChildId(childId);
+                    System.out.println("Child id after setting:" + task.getChildId());
                     return ResponseEntity.ok().body("{\"message\":\"Child Login successful\"}");
                 }
                 else if (authenticatedUser.getEmail().equals("admin")&& authenticatedUser.getPassword().equals("Admin@123")) {
