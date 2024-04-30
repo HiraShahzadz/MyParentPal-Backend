@@ -39,7 +39,20 @@ public class UserController {
         userServices.saveorUpdate(parent);
         return ResponseEntity.ok().body(parent.getId());
     }
+    @PostMapping(value = "/save-parent-google")
+    public ResponseEntity<Object> saveParentGoogle(@RequestBody Parent parent) {
+        // Check if the email already exists in the database
+        if (userServices.existsByEmail(parent.getEmail())) {
+            // If email already exists, retrieve the existing parent and return its ID
+            User existingParent = userServices.findByEmail(parent.getEmail());
+            System.out.println(existingParent.getId());
+            return ResponseEntity.ok().body(existingParent.getId());
+        }
 
+        // Save the new parent
+        userServices.saveorUpdate(parent);
+        return ResponseEntity.ok().body(parent.getId());
+    }
     @GetMapping(value = "/get-all")
     public Iterable<User> getUsers() {
 
