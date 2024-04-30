@@ -1,26 +1,45 @@
 package com.fyp.MyParentPal.Entity;
 
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.stereotype.Component;
+
 import java.sql.Blob;
 import java.util.Arrays;
 
 @Document(collection = "Task_Submission")
+@Component
+@Data
 public class TaskSubmission {
     @Id
     private String _id;
     private String fileName;
+
+    private String taskid;
     private String typedMessage;
 
-    public String gettypedMessage() {
+    public String getMessage() {
         return typedMessage;
     }
 
-    public void setTextmssage(String typedMessage) {
-        this.typedMessage = typedMessage;
+    public void setMessage(String message) {
+        this.typedMessage = message;
     }
+
+    public String getTaskid() {
+        return taskid;
+    }
+
+    public void setTaskid(String taskid) {
+        this.taskid = taskid;
+    }
+
 
     private String fileType;
    @Field
@@ -67,11 +86,13 @@ public class TaskSubmission {
     public TaskSubmission() {
 
     }
+
     @Override
     public String toString() {
         return "TaskSubmission{" +
                 "_id='" + _id + '\'' +
                 ", fileName='" + fileName + '\'' +
+                ", taskid='" + taskid + '\'' +
                 ", fileType='" + fileType + '\'' +
                 ", files=" + Arrays.toString(files) +
                 '}';

@@ -19,6 +19,16 @@ public class RewardRequest {
     @JsonFormat(pattern = "MM/dd/yyyy", timezone = "UTC")
     private LocalDate date;
     private String status;
+    private String childId;
+
+    public String getChildId() {
+        return childId;
+    }
+
+    public void setChildId(String childId) {
+        this.childId = childId;
+    }
+
     public RewardRequest() {
     }
 
