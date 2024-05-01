@@ -1,8 +1,11 @@
 package com.fyp.MyParentPal.Controller;
 
+import com.fyp.MyParentPal.Entity.Task;
 import com.fyp.MyParentPal.Entity.User;
 import com.fyp.MyParentPal.Service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.fyp.MyParentPal.Entity.RewardRequest;
@@ -20,7 +23,7 @@ public class RewardRequestController {
     private final RewardRequestServices rewardRequestServices; // Define final for constructor injection
     private final RewardRequestRepo rewardRequestRepo; // Define final for constructor injection
     @Autowired
-    UserServices userServices;
+    private Task mytask;
     @Autowired
     public RewardRequestController(RewardRequestServices rewardRequestServices, RewardRequestRepo rewardRequestRepo) {
         this.rewardRequestServices = rewardRequestServices;
@@ -28,17 +31,24 @@ public class RewardRequestController {
     }
 
     @PostMapping(value = "/save")
-    public String saveRewardRequest(@RequestBody RewardRequest rewardRequest) {
+    public ResponseEntity<List<RewardRequest>> saveRewardRequest(@RequestBody RewardRequest rewardRequest) {
         LocalDate localDate = LocalDate.now(ZoneId.of("Asia/Karachi"));
 
+        if (mytask == null || mytask.getChildId() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        // Fetch child ID from mytask
+        String childId = mytask.getChildId();
+        System.out.println("Child id in rewardrequest: " + childId);
         // Set the date in the query
         rewardRequest.setDate(localDate);
-
+        rewardRequest.setChildId(childId);
         // Set the status to "In Progress"
         rewardRequest.setStatus("In Progress");
 
         rewardRequestServices.save(rewardRequest);
-        return rewardRequest.get_id();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
 
