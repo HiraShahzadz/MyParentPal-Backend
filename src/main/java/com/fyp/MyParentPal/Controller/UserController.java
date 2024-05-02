@@ -29,8 +29,11 @@ public class UserController {
     public ResponseEntity<String> saveChild(@RequestBody Child child) {
         // Convert Base64 string to byte array
         System.out.println("Parent id at child saving time:" + child.getParentId());
-        byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
-        child.setImage(decodedImage);
+        String imgBase64 = child.getImg();
+        if (imgBase64 != null) {
+            byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
+            child.setImage(decodedImage);
+        }
         child.setParentId(mychild.getParentId());
         // Check if the email already exists in the database
         if (userServices.existsByEmail(child.getEmail())) {
@@ -171,16 +174,12 @@ public class UserController {
             existingParent.setPhoneNo(updatedParent.getPhoneNo());
             existingParent.setCnic(updatedParent.getCnic());
             // Convert Base64 string to byte array
-
-
             String imgBase64 = updatedParent.getImg();
             if (imgBase64 != null) {
                 byte[] decodedImage = Base64.getDecoder().decode(updatedParent.getImg());
                 existingParent.setImage(decodedImage);
                 existingParent.setImg(updatedParent.getImg());
             }
-
-            // Similarly, update other attributes as needed
 
             // Save the updated parent back to the database
             userServices.saveorUpdate(existingParent);
@@ -192,6 +191,42 @@ public class UserController {
             return ResponseEntity.status(500).body(null);
         }
     }
+    @PutMapping(value = "/editChild/{id}")
+    public ResponseEntity<Child> updateChildDetails(@RequestBody Child updatedChild, @PathVariable(name = "id") String childId) {
+        try {
+            // Fetch the child from the database based on the provided ID
+            Child existingChild = (Child) userServices.getUserByID(childId);
 
+            // Check if the child with the provided ID exists
+            if (existingChild == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Update the existing child's details with the provided data
+            existingChild.setEmail(updatedChild.getEmail());
+            existingChild.setPassword(updatedChild.getPassword());
+            existingChild.setName(updatedChild.getName());
+            existingChild.setTags(updatedChild.getTags());
+            existingChild.setDob(updatedChild.getDob());
+            existingChild.setGender(updatedChild.getGender());
+
+            // Convert Base64 string to byte array
+            String imgBase64 = updatedChild.getImg();
+            if (imgBase64 != null) {
+                byte[] decodedImage = Base64.getDecoder().decode(updatedChild.getImg());
+                existingChild.setImage(decodedImage);
+                existingChild.setImg(updatedChild.getImg());
+            }
+
+            // Save the updated parent back to the database
+            userServices.saveorUpdate(existingChild);
+
+            // Return the updated parent with a success status
+            return ResponseEntity.ok(existingChild);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
 
 }

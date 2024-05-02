@@ -1,5 +1,6 @@
 package com.fyp.MyParentPal.Controller;
 
+import com.fyp.MyParentPal.Entity.PenaltyTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +31,16 @@ public class TaskController {
     private Task mytask;
     @PostMapping(value = "/save")
     public String saveTask(@RequestBody Task tasks) {
-
         taskServices.saveorUpdate(tasks);
+
         return tasks.get_id();
+    }
+
+    @PostMapping(value = "/save_penalty")
+    public String savePenaltyTask(@RequestBody PenaltyTask penaltyTask) {
+        taskServices.saveorUpdate(penaltyTask);
+        System.out.println("penaltyTask is: " + penaltyTask);
+        return penaltyTask.get_id();
     }
     
     @GetMapping(value = "/getall")
@@ -71,6 +79,24 @@ public class TaskController {
         
         if (existingTask != null) {
             existingTask.setStatus(updatedTask.getStatus());
+            taskServices.saveorUpdate(existingTask);
+            System.out.println(existingTask);
+            return existingTask;
+        } else {
+            // Handle the case when the task with the given ID is not found
+            // You might want to return an appropriate response or throw an exception
+            return null;
+        }
+    }
+
+    @PutMapping(value = "/edit_penalty/{id}")
+    private Task updateTask(@RequestBody Task updatedTask, @PathVariable(name = "id") String _id) {
+        Task existingTask = taskServices.getTaskByID(_id);
+
+        if (existingTask != null) {
+            existingTask.setStatus(updatedTask.getStatus());
+            existingTask.setTaskdate(updatedTask.getTaskdate());
+            existingTask.setTasktime(updatedTask.getTasktime());
             taskServices.saveorUpdate(existingTask);
             System.out.println(existingTask);
             return existingTask;
