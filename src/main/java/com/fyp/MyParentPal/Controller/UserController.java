@@ -87,6 +87,18 @@ public class UserController {
             return ResponseEntity.status(500).body("An error occurred during login: " + e.getMessage());
         }
     }
+    @PostMapping("/getId")
+    public ResponseEntity<Object> getObjectId(@RequestBody User credentials) {
+
+        String email = credentials.getEmail();
+        String password = credentials.getPassword();
+        User authenticatedUser = userServices.findByEmail(email);
+        if (authenticatedUser != null && authenticatedUser.getPassword().equals(password)) {
+
+            return ResponseEntity.ok().body(authenticatedUser.getId());
+        }
+        return null;
+    }
     @GetMapping(value = "/count-users")
     public ResponseEntity<?> countParentChildUsers() {
         try {
