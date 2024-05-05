@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TaskSubmissionRepo extends MongoRepository<TaskSubmission,String> {
-
+    TaskSubmission findByTaskid(String taskId);
 }

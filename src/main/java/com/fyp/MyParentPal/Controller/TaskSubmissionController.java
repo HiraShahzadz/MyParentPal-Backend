@@ -1,5 +1,6 @@
 package com.fyp.MyParentPal.Controller;
 
+import com.fyp.MyParentPal.Entity.Parent;
 import com.fyp.MyParentPal.Entity.RewardRequest;
 import com.fyp.MyParentPal.Entity.Task;
 import com.fyp.MyParentPal.Entity.TaskSubmission;
@@ -88,18 +89,32 @@ public class TaskSubmissionController {
         }
     }
 
-    @PostMapping(value = "/edit")
-    public String sendMessage(@ModelAttribute TaskSubmission tasksubmission,@RequestBody TaskSubmission submission) {
+    @PostMapping(value = "/send")
+    public ResponseEntity<TaskSubmission> sendOrEditSubmission(@RequestParam(name = "taskid") String taskId, @RequestBody TaskSubmission submission) {
+        try {
+            // Check if a submission already exists for the given taskId
+            TaskSubmission existingSubmission = Services.getByTaskId(taskId);
 
-
-            String message = submission.getMessage();
-            // Set file details in the TaskSubmission object
-            tasksubmission.setMessage(message);
-            System.out.println("Message "+ submission.getMessage());
-            // Save the submission
-            Services.save(tasksubmission);
-            return submission.get_id();
-
+            if (existingSubmission == null) {
+                // If no submission exists, create a new one
+                // Set the taskId for the new submission
+                String message = submission.getMessage();
+                submission.setTaskid(taskId); // Set the taskid
+                submission.setMessage(message);
+                Services.save(submission);
+                return ResponseEntity.ok(submission);
+            } else {
+                // If a submission exists, update it with the new message
+                String typedMessage = submission.getTypedMessage();
+                existingSubmission.setMessage(typedMessage);
+                Services.save(existingSubmission);
+                return ResponseEntity.ok(existingSubmission);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
 }
+

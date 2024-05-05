@@ -25,15 +25,13 @@ public class UserController {
     private Child mychild;
     @Autowired
     private Task task;
+    String childId;
     @PostMapping(value = "/save-child")
     public ResponseEntity<String> saveChild(@RequestBody Child child) {
         // Convert Base64 string to byte array
         System.out.println("Parent id at child saving time:" + child.getParentId());
-        String imgBase64 = child.getImg();
-        if (imgBase64 != null) {
-            byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
-            child.setImage(decodedImage);
-        }
+        byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
+        child.setImage(decodedImage);
         child.setParentId(mychild.getParentId());
         // Check if the email already exists in the database
         if (userServices.existsByEmail(child.getEmail())) {
@@ -138,7 +136,7 @@ public class UserController {
                     System.out.println("Parent id after setting:" + mychild.getParentId());
                     return ResponseEntity.ok().body("{\"message\":\"Parent Login successful\"}");
                 } else if (authenticatedUser instanceof Child) {
-                    String childId =  authenticatedUser.getId();
+                    childId =  authenticatedUser.getId();
                     System.out.println("Child id:" + childId);
                     task.setChildId(childId);
                     System.out.println("Child id after setting:" + task.getChildId());
@@ -174,12 +172,16 @@ public class UserController {
             existingParent.setPhoneNo(updatedParent.getPhoneNo());
             existingParent.setCnic(updatedParent.getCnic());
             // Convert Base64 string to byte array
+
+
             String imgBase64 = updatedParent.getImg();
             if (imgBase64 != null) {
                 byte[] decodedImage = Base64.getDecoder().decode(updatedParent.getImg());
                 existingParent.setImage(decodedImage);
                 existingParent.setImg(updatedParent.getImg());
             }
+
+            // Similarly, update other attributes as needed
 
             // Save the updated parent back to the database
             userServices.saveorUpdate(existingParent);
@@ -191,38 +193,26 @@ public class UserController {
             return ResponseEntity.status(500).body(null);
         }
     }
-    @PutMapping(value = "/editChild/{id}")
-    public ResponseEntity<Child> updateChildDetails(@RequestBody Child updatedChild, @PathVariable(name = "id") String childId) {
+
+    @GetMapping(value = "/getChildId")
+    public ResponseEntity<List<Child>> getChildIdData() {
         try {
-            // Fetch the child from the database based on the provided ID
-            Child existingChild = (Child) userServices.getUserByID(childId);
+            // Fetch All User Data
+            Iterable<User> userData = userServices.listAll();
 
-            // Check if the child with the provided ID exists
-            if (existingChild == null) {
-                return ResponseEntity.notFound().build();
+            // Filter out only Parent objects with matching parent ID
+            List<Child> listChild = new ArrayList<>();
+            for (User user : userData) {
+                if (user instanceof Child) {
+                    Child child = (Child) user;
+                    String userId = child.getId();
+                    if (userId != null && userId.equals(childId)) {
+                        listChild.add(child);
+                    }
+                }
             }
 
-            // Update the existing child's details with the provided data
-            existingChild.setEmail(updatedChild.getEmail());
-            existingChild.setPassword(updatedChild.getPassword());
-            existingChild.setName(updatedChild.getName());
-            existingChild.setTags(updatedChild.getTags());
-            existingChild.setDob(updatedChild.getDob());
-            existingChild.setGender(updatedChild.getGender());
-
-            // Convert Base64 string to byte array
-            String imgBase64 = updatedChild.getImg();
-            if (imgBase64 != null) {
-                byte[] decodedImage = Base64.getDecoder().decode(updatedChild.getImg());
-                existingChild.setImage(decodedImage);
-                existingChild.setImg(updatedChild.getImg());
-            }
-
-            // Save the updated parent back to the database
-            userServices.saveorUpdate(existingChild);
-
-            // Return the updated parent with a success status
-            return ResponseEntity.ok(existingChild);
+            return ResponseEntity.ok().body(listChild);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(null);

@@ -22,9 +22,11 @@ public class TaskSubmissionServices {
         return this.repo.findAll();
     }
 
-    public TaskSubmission getTaskByID(String taskId) {
+    public TaskSubmission getByID(String Id) {
 
-        return repo.findById(taskId).get();
+        return repo.findById(Id).get();
     }
-
+    public TaskSubmission getByTaskId(String taskId) {
+        return repo.findByTaskid(taskId);
+    }
 }
