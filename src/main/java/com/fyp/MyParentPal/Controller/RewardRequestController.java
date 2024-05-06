@@ -45,7 +45,7 @@ public class RewardRequestController {
         rewardRequest.setDate(localDate);
         rewardRequest.setChildId(childId);
         // Set the status to "In Progress"
-        rewardRequest.setStatus("In Progress");
+        rewardRequest.setStatus("Pending");
 
         rewardRequestServices.save(rewardRequest);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
