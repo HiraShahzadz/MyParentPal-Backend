@@ -1,5 +1,6 @@
 package com.fyp.MyParentPal.Repo;
 
+import com.fyp.MyParentPal.Entity.Child;
 import com.fyp.MyParentPal.Entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -11,6 +12,7 @@ import java.util.List;
 public interface UserRepo extends MongoRepository<User,String> {
     User findByEmail(String email);
     boolean existsByEmail(String email);
+
     @Query("{ 'role' : { $ne: 'admin' } }")
     List<User> findChildAndParentUsers();
 

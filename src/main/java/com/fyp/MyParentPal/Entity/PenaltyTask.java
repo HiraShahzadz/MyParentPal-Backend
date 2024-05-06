@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Parent extends User {
-    private String firstName;
-    private String lastName;
-    private String phoneNo;
-    private String cnic;
+public class PenaltyTask extends Task{
+    //task type tell it is panelty task
+    private String taskTypeIs;
+    private String taskId;
+    private List<String> cheatTags;
 }

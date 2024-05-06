@@ -1,6 +1,9 @@
 package com.fyp.MyParentPal.Controller;
 
+import com.fyp.MyParentPal.Entity.PenaltyTask;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fyp.MyParentPal.Entity.Task;
 import com.fyp.MyParentPal.Service.TaskServices;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("api/v1/task")
@@ -21,27 +27,51 @@ public class TaskController {
 	
 	@Autowired
     private TaskServices taskServices;
-
+    @Autowired
+    private Task mytask;
     @PostMapping(value = "/save")
     public String saveTask(@RequestBody Task tasks) {
-
         taskServices.saveorUpdate(tasks);
+
         return tasks.get_id();
+    }
+
+    @PostMapping(value = "/save_penalty")
+    public String savePenaltyTask(@RequestBody PenaltyTask penaltyTask) {
+        taskServices.saveorUpdate(penaltyTask);
+        System.out.println("penaltyTask is: " + penaltyTask);
+        return penaltyTask.get_id();
     }
     
     @GetMapping(value = "/getall")
     public Iterable<Task> getTasks() {
         return taskServices.listAll();
     }
-    
-   /* @PutMapping(value = "/edit/{id}")
+
+    @PutMapping(value = "/edit_task/{id}")
     private Task update(@RequestBody Task tasks, @PathVariable(name = "id") String _id) {
-    	tasks.set_id(_id);
-    	taskServices.saveorUpdate(tasks);
-    	System.out.println(tasks);
+        // Set the _id received from the path variable
+        tasks.set_id(_id);
+
+        // Retrieve the original task from the database using the _id
+        Task originalTask = taskServices.getTaskByID(_id);
+
+        // Set the id and status values from the original task to prevent updating them
+        tasks.set_id(originalTask.get_id());
+        tasks.setTaskassignee(originalTask.getTaskassignee());
+        tasks.setTasktype(originalTask.getTasktype());
+        tasks.setChildId(originalTask.getChildId());
+        // Save or update the task
+        taskServices.saveorUpdate(tasks);
+
+        // Print the updated task for debugging
+        System.out.println(tasks);
+
+        // Return the updated task
         return tasks;
     }
-    */
+
+
     @PutMapping(value = "/edit/{id}")
     private Task updateStatus(@RequestBody Task updatedTask, @PathVariable(name = "id") String _id) {
         Task existingTask = taskServices.getTaskByID(_id);
@@ -69,4 +99,38 @@ public class TaskController {
     private Task getTask(@PathVariable(name = "id") String taskid) {
         return taskServices.getTaskByID(taskid);
     }
+
+
+    @GetMapping(value = "/getTasks")
+    public ResponseEntity<List<Task>> getChildTasks() {
+        try {
+            // Check if mytask is not null
+            if (mytask == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+
+            // Fetch all tasks
+            String childId = mytask.getChildId();
+            System.out.println("Child id: " + childId);
+
+            Iterable<Task> allTasks = taskServices.listAll();
+
+            // Filter tasks based on the child ID
+            List<Task> childTasks = new ArrayList<>();
+            for (Task task : allTasks) {
+                String taskChildId = task.getChildId();
+                if (taskChildId != null && taskChildId.equals(childId)) {
+                    childTasks.add(task);
+                }
+            }
+
+            return ResponseEntity.ok().body(childTasks);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+
 }
+
