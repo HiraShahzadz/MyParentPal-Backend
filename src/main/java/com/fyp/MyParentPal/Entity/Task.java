@@ -29,5 +29,6 @@ public class Task {
 	private String tasktag;
 	private String taskassignee;
 	private String tasktype;
+	private String taskRemarks;
 	private String childId;
 }

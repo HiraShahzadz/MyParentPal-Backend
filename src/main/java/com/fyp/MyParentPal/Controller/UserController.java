@@ -193,7 +193,43 @@ public class UserController {
             return ResponseEntity.status(500).body(null);
         }
     }
+    @PutMapping(value = "/editChild/{id}")
+    public ResponseEntity<Child> updateChildDetails(@RequestBody Child updatedChild, @PathVariable(name = "id") String childId) {
+        try {
+            // Fetch the child from the database based on the provided ID
+            Child existingChild = (Child) userServices.getUserByID(childId);
 
+            // Check if the child with the provided ID exists
+            if (existingChild == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Update the existing child's details with the provided data
+            existingChild.setEmail(updatedChild.getEmail());
+            existingChild.setPassword(updatedChild.getPassword());
+            existingChild.setName(updatedChild.getName());
+            existingChild.setTags(updatedChild.getTags());
+            existingChild.setDob(updatedChild.getDob());
+            existingChild.setGender(updatedChild.getGender());
+
+            // Convert Base64 string to byte array
+            String imgBase64 = updatedChild.getImg();
+            if (imgBase64 != null) {
+                byte[] decodedImage = Base64.getDecoder().decode(updatedChild.getImg());
+                existingChild.setImage(decodedImage);
+                existingChild.setImg(updatedChild.getImg());
+            }
+
+            // Save the updated parent back to the database
+            userServices.saveorUpdate(existingChild);
+
+            // Return the updated parent with a success status
+            return ResponseEntity.ok(existingChild);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
     @GetMapping(value = "/getChildId")
     public ResponseEntity<List<Child>> getChildIdData() {
         try {

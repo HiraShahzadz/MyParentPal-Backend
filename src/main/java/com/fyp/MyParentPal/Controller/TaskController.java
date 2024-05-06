@@ -58,7 +58,6 @@ public class TaskController {
 
         // Set the id and status values from the original task to prevent updating them
         tasks.set_id(originalTask.get_id());
-        tasks.setStatus(originalTask.getStatus());
         tasks.setTaskassignee(originalTask.getTaskassignee());
         tasks.setTasktype(originalTask.getTasktype());
         tasks.setChildId(originalTask.getChildId());
@@ -79,24 +78,6 @@ public class TaskController {
         
         if (existingTask != null) {
             existingTask.setStatus(updatedTask.getStatus());
-            taskServices.saveorUpdate(existingTask);
-            System.out.println(existingTask);
-            return existingTask;
-        } else {
-            // Handle the case when the task with the given ID is not found
-            // You might want to return an appropriate response or throw an exception
-            return null;
-        }
-    }
-
-    @PutMapping(value = "/edit_penalty/{id}")
-    private Task updateTask(@RequestBody Task updatedTask, @PathVariable(name = "id") String _id) {
-        Task existingTask = taskServices.getTaskByID(_id);
-
-        if (existingTask != null) {
-            existingTask.setStatus(updatedTask.getStatus());
-            existingTask.setTaskdate(updatedTask.getTaskdate());
-            existingTask.setTasktime(updatedTask.getTasktime());
             taskServices.saveorUpdate(existingTask);
             System.out.println(existingTask);
             return existingTask;
