@@ -12,15 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Component
 public class Child extends User {
-    private LocalDate dob;
+    private String dob;
     private String gender;
     private List<String> tags;
     private String parentId;
-    // Method to calculate age
-    public int calculateAge() {
-        LocalDate currentDate = LocalDate.now();
-        return Period.between(this.dob, currentDate).getYears();
-    }
-
 }
 

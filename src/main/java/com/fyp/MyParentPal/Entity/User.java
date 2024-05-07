@@ -19,4 +19,5 @@ public class User {
 	private String name;
 	private byte[] image;
 	private String img;
+	private String location;
 }

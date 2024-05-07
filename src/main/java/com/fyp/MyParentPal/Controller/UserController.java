@@ -193,26 +193,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/child-age")
-    public ResponseEntity<?> getChildAge(@RequestBody User credentials) {
-        String email = credentials.getEmail();
-
-        User user = userServices.findByEmail(email);
-
-
-        // Check if the user exists and is a child
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        } else if (!(user instanceof Child)) {
-            return ResponseEntity.status(400).body("User is not a child");
-        }
-
-        // Cast the user to Child and calculate the age
-        Child child = (Child) user;
-        int age = child.calculateAge();
-        return ResponseEntity.ok(age);
-    }
-
     static class UserCountsResponse {
         private long parentUsers;
         private long childUsers;
