@@ -13,6 +13,6 @@ public class DeadlineExtension {
     @Id
     private String id;
     private String taskid;
-    private String ChildId;
+    private String childId;
     private String typedMessage;
 }

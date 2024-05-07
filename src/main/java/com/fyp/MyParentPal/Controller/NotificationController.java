@@ -155,13 +155,8 @@ public class NotificationController {
 
         Notification notify = new Notification();
         String parentId = mychild.getParentId();
-
-        // Assuming you have a method in the user service to fetch the user by ID
-        User parent = userServices.getUserByID(parentId);
-
-        // Assuming the User entity has a method to get the child's name
-        String parentName = parent.getName();
-        String message = parentName + " assigned you a task";
+        String childId = task.getChildId();
+        String message = "Your parent assigns you a task of "+ task.getTaskname();
 
         Notification notification = new Notification();
         notification.setMessage(message);
@@ -171,6 +166,7 @@ public class NotificationController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy 'at' h:mm a");
         String formattedDateTime = dateTime.format(formatter);
         notification.setTime(formattedDateTime);
+        notification.setChildId(childId);
         messageService.save(notification);
 
         return ResponseEntity.ok().build();
