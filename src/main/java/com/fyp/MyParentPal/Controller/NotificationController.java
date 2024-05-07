@@ -29,11 +29,13 @@ public class NotificationController {
     @Autowired
     private Task mytask;
     @Autowired
-    User child;
+    Child mychild;
     @PostMapping("/sendRequestNotification")
     public ResponseEntity<?> sendMessage(@RequestBody Notification notify) {
+
         String reward = notify.getDesiredreward();
         String ChildId=mytask.getChildId();
+
         // Assuming you have a method in the user service to fetch the user by ID
         User child = userServices.getUserByID(ChildId);
 
@@ -148,6 +150,59 @@ public class NotificationController {
 
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/assigntaskNotification")
+    public ResponseEntity<?> Notification(@RequestBody Task task) {
 
-   
+        Notification notify = new Notification();
+        String parentId = mychild.getParentId();
+
+        // Assuming you have a method in the user service to fetch the user by ID
+        User parent = userServices.getUserByID(parentId);
+
+        // Assuming the User entity has a method to get the child's name
+        String parentName = parent.getName();
+        String message = parentName + " assigned you a task";
+
+        Notification notification = new Notification();
+        notification.setMessage(message);
+        notification.setParentid(parentId);
+        notification.setTaskname(task.getTaskname());
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy 'at' h:mm a");
+        String formattedDateTime = dateTime.format(formatter);
+        notification.setTime(formattedDateTime);
+        messageService.save(notification);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/TaskRewardedNotification")
+    public ResponseEntity<?> RewardNotification(@RequestParam(name = "taskid") String taskId) {
+
+        Task task = taskService.getTaskByID(taskId);
+        String taskName= task.getTaskname();
+
+        Notification notify = new Notification();
+        String ParentId=mytask.getChildId();
+
+        // Assuming you have a method in the user service to fetch the user by ID
+        User parent = userServices.getUserByID(ParentId);
+
+        // Assuming the User entity has a method to get the child's name
+        String parentName = parent.getName();
+        String message = parentName + " rewarded a task";
+
+        Notification notification = new Notification();
+        notification.setMessage(message);
+        notification.setChildId(ParentId);
+        notification.setTaskname(taskName);
+        LocalDateTime dateTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a 'at' M/d/yyyy");
+        String formattedDateTime = dateTime.format(formatter);
+        notification.setTime(formattedDateTime);
+        messageService.save(notification);
+
+        return ResponseEntity.ok().build();
+    }
+
 }
