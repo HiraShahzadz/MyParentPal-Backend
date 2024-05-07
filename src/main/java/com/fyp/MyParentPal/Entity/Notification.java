@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 public class Notification {
     @Id
     private String id;
-    private String  ChildId;
-    private String  Parentid;
+    private String ChildId;
+    private String Parentid;
     private String time;
     private String ChildName;
     private String taskname;

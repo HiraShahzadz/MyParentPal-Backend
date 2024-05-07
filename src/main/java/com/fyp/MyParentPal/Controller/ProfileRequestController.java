@@ -2,6 +2,7 @@ package com.fyp.MyParentPal.Controller;
 
 import com.fyp.MyParentPal.Entity.ProfileRequest;
 import com.fyp.MyParentPal.Entity.Task;
+import com.fyp.MyParentPal.Entity.User;
 import com.fyp.MyParentPal.Service.ProfileRequestServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.Base64;
 @RequestMapping("api/v1/profile")
 public class ProfileRequestController {
     @Autowired
-    private ProfileRequestServices Services;
+    private ProfileRequestServices profileRequestServices;
     @Autowired
     private Task mytask;
     @PostMapping(value = "/save")
@@ -31,8 +32,13 @@ public class ProfileRequestController {
 
         profile.setImage(decodedImage);
         profile.setChildId(Id);
-        Services.save(profile);
+        profileRequestServices.save(profile);
         //System.out.println("Updated Profile: " +profile.toString());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/get-all")
+    public Iterable<ProfileRequest> getUsers() {
+        return profileRequestServices.listAll();
     }
 }

@@ -15,5 +15,8 @@ public class ProfileRequestServices {
     public void save(ProfileRequest request) {
         repo.save(request);
     }
+    public Iterable<ProfileRequest> listAll() {
 
+        return this.repo.findAll();
+    }
 }
