@@ -16,5 +16,5 @@ public class ProfileRequest {
     private String status;
     private byte[] image;
     private String img;
-    private String ChildId;
+    private String childId;
 }
