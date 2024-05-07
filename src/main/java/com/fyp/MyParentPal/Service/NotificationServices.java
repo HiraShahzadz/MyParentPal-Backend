@@ -23,12 +23,5 @@ public class NotificationServices {
         return this.repo.findAll();
     }
 
-    public void sendMessage(Long toId, String messageContent) {
-        Notification notification = new Notification();
-        notification.setToId(toId);
-        notification.setMessage(messageContent);
-        repo.save(notification);
-    }
-
 
 }
