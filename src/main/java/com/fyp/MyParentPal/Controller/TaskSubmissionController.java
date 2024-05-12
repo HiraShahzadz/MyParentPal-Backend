@@ -4,6 +4,7 @@ import com.fyp.MyParentPal.Entity.Parent;
 import com.fyp.MyParentPal.Entity.RewardRequest;
 import com.fyp.MyParentPal.Entity.Task;
 import com.fyp.MyParentPal.Entity.TaskSubmission;
+import com.fyp.MyParentPal.Service.TaskServices;
 import com.fyp.MyParentPal.Service.TaskSubmissionServices;
 import com.fyp.MyParentPal.Service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ public class TaskSubmissionController {
     private TaskSubmissionServices Services;
     @Autowired
     private TaskSubmission mysubmission;
+
+
     @GetMapping(value = "/getall")
     public Iterable<TaskSubmission> getSubmitFile() {
         return Services.listAll();
@@ -34,8 +37,13 @@ public class TaskSubmissionController {
 
     @PostMapping(value = "/save")
     public ResponseEntity<String> upload(@ModelAttribute TaskSubmission submission,
-                                         @RequestParam("file") MultipartFile file) {
+                                         @RequestParam("file") MultipartFile file,
+                                         @RequestParam(name = "taskid") String taskId) {
+
         try {
+            // Check if a submission already exists for the given taskId
+            TaskSubmission existingSubmission = Services.getByTaskId(taskId);
+
             // Get file bytes
             byte[] fileBytes = file.getBytes();
 
@@ -50,15 +58,28 @@ public class TaskSubmissionController {
             submission.setFileType(fileType);
             submission.setFiles(fileBytes);
 
-            // Save the submission
-            Services.save(submission);
+
+            if (existingSubmission == null) {
+                // Save the submission
+                 Services.save(submission);
+
+
+            } else {
+                // Update the existing submission
+                existingSubmission.setFileName(fileName);
+                existingSubmission.setFileType(fileType);
+                existingSubmission.setFiles(fileBytes);
+                Services.save(existingSubmission);
+
+            }
 
             return ResponseEntity.ok().body("File uploaded successfully.");
+
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error uploading file.");
         }
-    }
+}
 
     @GetMapping(value = "/getSubmission")
     public ResponseEntity<List<TaskSubmission>> getSubmission() {
@@ -102,12 +123,14 @@ public class TaskSubmissionController {
                 submission.setTaskid(taskId); // Set the taskid
                 submission.setMessage(message);
                 Services.save(submission);
+
                 return ResponseEntity.ok(submission);
             } else {
                 // If a submission exists, update it with the new message
                 String typedMessage = submission.getTypedMessage();
                 existingSubmission.setMessage(typedMessage);
                 Services.save(existingSubmission);
+
                 return ResponseEntity.ok(existingSubmission);
             }
         } catch (Exception e) {

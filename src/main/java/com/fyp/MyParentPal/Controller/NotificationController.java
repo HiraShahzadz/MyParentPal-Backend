@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -163,9 +165,13 @@ public class NotificationController {
         notification.setParentid(parentId);
         notification.setTaskname(task.getTaskname());
         LocalDateTime dateTime = LocalDateTime.now();
+        LocalDate  date=LocalDate.now();
+        LocalTime localtime = LocalTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy 'at' h:mm a");
         String formattedDateTime = dateTime.format(formatter);
         notification.setTime(formattedDateTime);
+        notification.setDate(date);
+        notification.setLocaltime(localtime);
         notification.setChildId(childId);
         messageService.save(notification);
 
