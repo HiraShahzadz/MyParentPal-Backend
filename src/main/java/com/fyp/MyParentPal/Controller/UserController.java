@@ -30,8 +30,12 @@ public class UserController {
     public ResponseEntity<String> saveChild(@RequestBody Child child) {
         // Convert Base64 string to byte array
         System.out.println("Parent id at child saving time:" + child.getParentId());
-        byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
-        child.setImage(decodedImage);
+        // Convert Base64 string to byte array
+        String imgBase64 = child.getImg();
+        if (imgBase64 != null) {
+            byte[] decodedImage = Base64.getDecoder().decode(child.getImg());
+            child.setImage(decodedImage);
+        }
         child.setParentId(mychild.getParentId());
         // Check if the email already exists in the database
         if (userServices.existsByEmail(child.getEmail())) {
