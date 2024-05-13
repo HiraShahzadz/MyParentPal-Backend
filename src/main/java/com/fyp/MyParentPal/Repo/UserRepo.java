@@ -13,4 +13,8 @@ public interface UserRepo extends MongoRepository<User,String> {
     User findByEmail(String email);
     boolean existsByEmail(String email);
 
+    @Query("{ 'role' : { $ne: 'admin' } }")
+    List<User> findChildAndParentUsers();
+
+    long countByRole(String role);
 }

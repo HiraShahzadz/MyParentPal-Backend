@@ -171,4 +171,169 @@ public class UserController {
         }
     }
 
+    @PostMapping("/getId")
+    public ResponseEntity<Object> getObjectId(@RequestBody User credentials) {
+
+        String email = credentials.getEmail();
+        String password = credentials.getPassword();
+        User authenticatedUser = userServices.findByEmail(email);
+        if (authenticatedUser != null && authenticatedUser.getPassword().equals(password)) {
+
+            return ResponseEntity.ok().body(authenticatedUser.getId());
+        }
+        return null;
+    }
+    @GetMapping(value = "/count-users")
+    public ResponseEntity<?> countParentChildUsers() {
+        try {
+            long parentUsers = userServices.getParentUsersCount();
+            long childUsers = userServices.getChildUsersCount();
+            long totalUsers=parentUsers+childUsers;
+
+            return ResponseEntity.ok(new UserCountsResponse(parentUsers, childUsers,totalUsers));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("An error occurred: " + e.getMessage());
+        }
+    }
+
+    static class UserCountsResponse {
+        private long parentUsers;
+        private long childUsers;
+        private long totalUsers;
+
+        public long getTotalUsers() {
+            return totalUsers;
+        }
+
+        public void setTotalUsers(long totalUsers) {
+            this.totalUsers = totalUsers;
+        }
+
+        public long getParentUsers() {
+            return parentUsers;
+        }
+
+        public void setParentUsers(long parentUsers) {
+            this.parentUsers = parentUsers;
+        }
+
+        public long getChildUsers() {
+            return childUsers;
+        }
+
+        public void setChildUsers(long childUsers) {
+            this.childUsers = childUsers;
+        }
+
+        public UserCountsResponse(long parentUsers, long childUsers, long totalUsers) {
+            this.parentUsers = parentUsers;
+            this.childUsers = childUsers;
+            this.totalUsers = totalUsers;
+        }
+    }
+
+    @PutMapping(value = "/editParent/{id}")
+    public ResponseEntity<Parent> updateParentDetails(@RequestBody Parent updatedParent, @PathVariable(name = "id") String parentId) {
+        try {
+            // Fetch the parent from the database based on the provided ID
+            Parent existingParent = (Parent) userServices.getUserByID(parentId);
+
+            // Check if the parent with the provided ID exists
+            if (existingParent == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Update the existing parent's details with the provided data
+            existingParent.setEmail(updatedParent.getEmail());
+            existingParent.setPassword(updatedParent.getPassword());
+            existingParent.setFirstName(updatedParent.getFirstName());
+            existingParent.setLastName(updatedParent.getLastName());
+            existingParent.setPhoneNo(updatedParent.getPhoneNo());
+            existingParent.setCnic(updatedParent.getCnic());
+            // Convert Base64 string to byte array
+
+
+            String imgBase64 = updatedParent.getImg();
+            if (imgBase64 != null) {
+                byte[] decodedImage = Base64.getDecoder().decode(updatedParent.getImg());
+                existingParent.setImage(decodedImage);
+                existingParent.setImg(updatedParent.getImg());
+            }
+
+            // Similarly, update other attributes as needed
+
+            // Save the updated parent back to the database
+            userServices.saveorUpdate(existingParent);
+
+            // Return the updated parent with a success status
+            return ResponseEntity.ok(existingParent);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+    @PutMapping(value = "/editChild/{id}")
+    public ResponseEntity<Child> updateChildDetails(@RequestBody Child updatedChild, @PathVariable(name = "id") String childId) {
+        try {
+            // Fetch the child from the database based on the provided ID
+            Child existingChild = (Child) userServices.getUserByID(childId);
+
+            // Check if the child with the provided ID exists
+            if (existingChild == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Update the existing child's details with the provided data
+            existingChild.setEmail(updatedChild.getEmail());
+            existingChild.setPassword(updatedChild.getPassword());
+            existingChild.setName(updatedChild.getName());
+            existingChild.setTags(updatedChild.getTags());
+            existingChild.setDob(updatedChild.getDob());
+            existingChild.setGender(updatedChild.getGender());
+
+            // Convert Base64 string to byte array
+            String imgBase64 = updatedChild.getImg();
+            if (imgBase64 != null) {
+                byte[] decodedImage = Base64.getDecoder().decode(updatedChild.getImg());
+                existingChild.setImage(decodedImage);
+                existingChild.setImg(updatedChild.getImg());
+            }
+
+            // Save the updated parent back to the database
+            userServices.saveorUpdate(existingChild);
+
+            // Return the updated parent with a success status
+            return ResponseEntity.ok(existingChild);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+    @GetMapping(value = "/getChildId")
+    public ResponseEntity<List<Child>> getChildIdData() {
+        try {
+            // Fetch All User Data
+            Iterable<User> userData = userServices.listAll();
+
+            // Filter out only Parent objects with matching parent ID
+            List<Child> listChild = new ArrayList<>();
+            for (User user : userData) {
+                if (user instanceof Child) {
+                    Child child = (Child) user;
+                    String userId = child.getId();
+                    if (userId != null && userId.equals(childId)) {
+                        listChild.add(child);
+                    }
+                }
+            }
+
+            return ResponseEntity.ok().body(listChild);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
+
 }
