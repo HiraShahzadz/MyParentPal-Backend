@@ -64,6 +64,8 @@ public class UserController {
             // If email already exists, retrieve the existing parent and return its ID
             User existingParent = userServices.findByEmail(parent.getEmail());
             System.out.println(existingParent.getId());
+            mychild.setParentId(existingParent.getId());
+            System.out.println("Parent id after setting google:" + mychild.getParentId());
             return ResponseEntity.ok().body(existingParent.getId());
         }
 
