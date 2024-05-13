@@ -37,3 +37,8 @@ build/
 
 # Ignore bin/.DS_Store
 bin/.DS_Store
+src/.DS_Store
+src/main/.DS_Store
+src/main/java/.DS_Store
+src/main/java/com/.DS_Store
+src/main/java/com/fyp/.DS_Store
