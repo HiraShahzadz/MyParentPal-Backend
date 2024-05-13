@@ -32,7 +32,6 @@ public class TaskController {
     @PostMapping(value = "/save")
     public String saveTask(@RequestBody Task tasks) {
         taskServices.saveorUpdate(tasks);
-
         return tasks.get_id();
     }
 
@@ -131,6 +130,10 @@ public class TaskController {
         }
     }
 
-
+    @PostMapping(value = "/reassign")
+    public String reassignTask(@RequestBody Task tasks) {
+        taskServices.saveorUpdate(tasks);
+        return tasks.get_id();
+    }
 }
 

@@ -31,4 +31,5 @@ public class Task {
 	private String tasktype;
 	private String taskRemarks;
 	private String childId;
+	private String percentage;
 }

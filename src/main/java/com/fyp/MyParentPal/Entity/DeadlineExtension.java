@@ -1,20 +1,18 @@
 package com.fyp.MyParentPal.Entity;
 
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileRequest {
+public class DeadlineExtension {
+    @Id
     private String id;
-    private String email;
-    private String password;
-    private String name;
-    private String dob;
-    private String status;
-    private byte[] image;
-    private String img;
+    private String taskid;
     private String childId;
+    private String typedMessage;
 }
