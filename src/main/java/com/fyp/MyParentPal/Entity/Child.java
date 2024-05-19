@@ -16,6 +16,7 @@ public class Child extends User {
     private String gender;
     private List<String> tags;
     private String parentId;
-    private String notificationTime;
+    private String startTime;
+    private String endTime;
 }
 
