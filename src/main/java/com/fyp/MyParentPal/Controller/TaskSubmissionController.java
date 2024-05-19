@@ -61,9 +61,7 @@ public class TaskSubmissionController {
 
             if (existingSubmission == null) {
                 // Save the submission
-                 Services.save(submission);
-
-
+                Services.save(submission);
             } else {
                 // Update the existing submission
                 existingSubmission.setFileName(fileName);
@@ -79,7 +77,7 @@ public class TaskSubmissionController {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Error uploading file.");
         }
-}
+    }
 
     @GetMapping(value = "/getSubmission")
     public ResponseEntity<List<TaskSubmission>> getSubmission() {
@@ -119,18 +117,14 @@ public class TaskSubmissionController {
             if (existingSubmission == null) {
                 // If no submission exists, create a new one
                 // Set the taskId for the new submission
-                String message = submission.getMessage();
                 submission.setTaskid(taskId); // Set the taskid
-                submission.setMessage(message);
                 Services.save(submission);
-
                 return ResponseEntity.ok(submission);
             } else {
-                // If a submission exists, update it with the new message
+                // If a submission exists, update it with the new typed message
                 String typedMessage = submission.getTypedMessage();
-                existingSubmission.setMessage(typedMessage);
+                existingSubmission.setTypedMessage(typedMessage);
                 Services.save(existingSubmission);
-
                 return ResponseEntity.ok(existingSubmission);
             }
         } catch (Exception e) {
@@ -138,6 +132,7 @@ public class TaskSubmissionController {
             return ResponseEntity.status(500).body(null);
         }
     }
+
 
 }
 
