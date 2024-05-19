@@ -5,6 +5,8 @@ import com.fyp.MyParentPal.Repo.ProfileRequestRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProfileRequestServices {
     @Autowired
@@ -20,5 +22,9 @@ public class ProfileRequestServices {
     public ProfileRequest getProfileByID(String profileId) {
 
         return repo.findById(profileId).get();
+    }
+    public boolean isRequestPending(String childId) {
+        List<ProfileRequest> pendingRequests = repo.findByChildIdAndStatus(childId, "Pending");
+        return !pendingRequests.isEmpty();
     }
 }
