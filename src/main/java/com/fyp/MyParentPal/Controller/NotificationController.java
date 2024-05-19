@@ -179,9 +179,9 @@ public class NotificationController {
     }
 
     @PostMapping("/TaskRewardedNotification")
-    public ResponseEntity<?> RewardNotification(@RequestParam(name = "taskid") String taskId) {
+    public ResponseEntity<?> RewardNotification(@RequestBody Task task) {
 
-        Task task = taskService.getTaskByID(taskId);
+        Task t1 = taskService.getTaskByID(task.get_id());
         String taskName= task.getTaskname();
 
         Notification notify = new Notification();
@@ -192,7 +192,7 @@ public class NotificationController {
 
         // Assuming the User entity has a method to get the child's name
         String parentName = parent.getName();
-        String message = parentName + " rewarded a task";
+        String message = parentName + " rewarded a task"+ taskName;
 
         Notification notification = new Notification();
         notification.setMessage(message);
