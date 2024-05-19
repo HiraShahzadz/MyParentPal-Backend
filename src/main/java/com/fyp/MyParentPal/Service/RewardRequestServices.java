@@ -23,8 +23,8 @@ public class RewardRequestServices {
         return this.repo.findAll();
     }
 
-    public RewardRequest getTaskByID(String id) {
+    public RewardRequest getTaskByID(String requestId) {
 
-        return repo.findById(id).get();
+        return repo.findById(requestId).get();
     }
 }

@@ -1,8 +1,6 @@
 package com.fyp.MyParentPal.Controller;
 
 import com.fyp.MyParentPal.Entity.Task;
-import com.fyp.MyParentPal.Entity.User;
-import com.fyp.MyParentPal.Service.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +65,27 @@ public class RewardRequestController {
         } else {
             // Fetch all requests
             return rewardRequestServices.listAll();
+        }
+    }
+
+    @GetMapping(value = "/get_requests")
+    public Iterable<RewardRequest> getUsers() {
+        return rewardRequestServices.listAll();
+    }
+
+    @PutMapping(value = "/edit-reward-req/{id}")
+    private RewardRequest updateStatus(@RequestBody RewardRequest updatedRequest, @PathVariable(name = "id") String _id) {
+        RewardRequest existingRequest = rewardRequestServices.getTaskByID(_id);
+
+        if (existingRequest != null) {
+            existingRequest.setStatus(updatedRequest.getStatus());
+            rewardRequestServices.save(existingRequest);
+            System.out.println(existingRequest);
+            return existingRequest;
+        } else {
+            // Handle the case when the task with the given ID is not found
+            // You might want to return an appropriate response or throw an exception
+            return null;
         }
     }
 }

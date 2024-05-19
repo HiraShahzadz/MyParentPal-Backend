@@ -2,7 +2,6 @@ package com.fyp.MyParentPal.Controller;
 
 import com.fyp.MyParentPal.Entity.ProfileRequest;
 import com.fyp.MyParentPal.Entity.Task;
-import com.fyp.MyParentPal.Entity.User;
 import com.fyp.MyParentPal.Service.ProfileRequestServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,5 +39,21 @@ public class ProfileRequestController {
     @GetMapping(value = "/get-all")
     public Iterable<ProfileRequest> getUsers() {
         return profileRequestServices.listAll();
+    }
+
+    @PutMapping(value = "/edit-profile-req/{id}")
+    private ProfileRequest updateStatus(@RequestBody ProfileRequest updatedProfile, @PathVariable(name = "id") String _id) {
+        ProfileRequest existingProfile = profileRequestServices.getProfileByID(_id);
+
+        if (existingProfile != null) {
+            existingProfile.setStatus(updatedProfile.getStatus());
+            profileRequestServices.save(existingProfile);
+            System.out.println(existingProfile);
+            return existingProfile;
+        } else {
+            // Handle the case when the task with the given ID is not found
+            // You might want to return an appropriate response or throw an exception
+            return null;
+        }
     }
 }
