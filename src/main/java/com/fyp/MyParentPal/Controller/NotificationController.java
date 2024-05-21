@@ -179,25 +179,22 @@ public class NotificationController {
     }
 
     @PostMapping("/TaskRewardedNotification")
-    public ResponseEntity<?> RewardNotification(@RequestParam(name = "taskid") String taskId) {
-
-        Task task = taskService.getTaskByID(taskId);
-        String taskName= task.getTaskname();
+    public ResponseEntity<?> RewardNotification(@RequestBody Task task) {
 
         Notification notify = new Notification();
-        String ParentId=mytask.getChildId();
+        String childId=mytask.getChildId();
+        String parentId = mychild.getParentId();
 
-        // Assuming you have a method in the user service to fetch the user by ID
-        User parent = userServices.getUserByID(ParentId);
-
-        // Assuming the User entity has a method to get the child's name
-        String parentName = parent.getName();
-        String message = parentName + " rewarded a task";
-
+        String message = "Your parent rewarded a task";
+        LocalDate  date=LocalDate.now();
+        LocalTime localtime = LocalTime.now();
         Notification notification = new Notification();
         notification.setMessage(message);
-        notification.setChildId(ParentId);
-        notification.setTaskname(taskName);
+        notification.setChildId(childId);
+        notification.setParentid(parentId);
+        notification.setDate(date);
+        notification.setLocaltime(localtime);
+        notification.setTaskname(task.getTaskname());
         LocalDateTime dateTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:mm a 'at' M/d/yyyy");
         String formattedDateTime = dateTime.format(formatter);
