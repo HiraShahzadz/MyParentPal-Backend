@@ -50,6 +50,10 @@ public class UserController {
     public ResponseEntity<String> saveParent(@RequestBody Parent parent) {
         // Check if the email already exists in the database
         if (userServices.existsByEmail(parent.getEmail())) {
+            User existingParent = userServices.findByEmail(parent.getEmail());
+            System.out.println(existingParent.getId());
+            mychild.setParentId(existingParent.getId());
+            System.out.println("Parent id after setting google:" + mychild.getParentId());
             return ResponseEntity.status(401).body("Email already exists");
         }
 

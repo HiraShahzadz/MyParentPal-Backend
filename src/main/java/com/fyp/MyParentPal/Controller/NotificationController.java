@@ -158,7 +158,7 @@ public class NotificationController {
         Notification notify = new Notification();
         String parentId = mychild.getParentId();
         String childId = task.getChildId();
-        String message = "Your parent assigns you a task of "+ task.getTaskname();
+        String message = "Your parent assigned you a task of "+ task.getTaskname();
 
         Notification notification = new Notification();
         notification.setMessage(message);
